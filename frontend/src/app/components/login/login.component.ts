@@ -4,56 +4,60 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   template: `
     <div class="login-container">
-      <div class="login-form">
-        <h2>Login</h2>
+      <mat-card class="login-card">
+        <mat-card-header>
+          <img mat-card-image width="100%" height="100%" src="https://midichlorians.it/wp-content/uploads/2022/06/Midichlorians-Lightsaber-Academy.png" alt="Matrix Logo">
+          <mat-card-title>MATRIX</mat-card-title>
+        </mat-card-header>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              formControlName="email"
-              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-            />
-            <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
-              Email is required and must be valid
+        <mat-card-content>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="nome@dominio.com">
+              <mat-icon matSuffix>email</mat-icon>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email obbligatoria</mat-error>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Email non valida</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password">
+              <mat-icon matSuffix (click)="togglePassword()" class="password-toggle">
+                {{showPassword ? 'visibility_off' : 'visibility'}}
+              </mat-icon>
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password obbligatoria</mat-error>
+            </mat-form-field>
+
+            <div *ngIf="errorMessage" class="error-alert">
+              <mat-icon>error</mat-icon>
+              <span>{{ errorMessage }}</span>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              formControlName="password"
-              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            />
-            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
-              Password is required
-            </div>
-          </div>
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+              <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+              {{ isLoading ? 'Accesso...' : 'Entra' }}
+            </button>
+          </form>
+        </mat-card-content>
 
-          <button type="submit" [disabled]="loginForm.invalid || isLoading">
-            {{ isLoading ? 'Logging in...' : 'Login' }}
-          </button>
-
-          <div *ngIf="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
-        </form>
-
-        <p>
-          Don't have an account?
-          <a routerLink="/register">Register here</a>
-        </p>
-      </div>
+        <mat-card-actions>
+          <span>Non hai un account? <a routerLink="/register">Registrati</a></span>
+        </mat-card-actions>
+      </mat-card>
     </div>
   `,
   styles: [`
@@ -62,69 +66,85 @@ import { AuthService } from '../../services/auth.service';
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-color: #f5f5f5;
+      padding: 24px;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
     }
 
-    .login-form {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    .login-card {
+      max-width: 420px;
       width: 100%;
-      max-width: 400px;
+      position: relative;
     }
 
-    .form-group {
-      margin-bottom: 1rem;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-    }
-
-    input {
+    mat-form-field {
       width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    input.error {
-      border-color: #dc3545;
     }
 
     button {
-      width: 100%;
-      padding: 0.75rem;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
+      height: 52px;
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .error-alert {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 8px;
+      color: #ff6b6b;
+      font-size: 14px;
+
+      mat-icon {
+        color: #ff6b6b;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .password-toggle {
       cursor: pointer;
+      transition: color 0.2s ease;
     }
 
-    button:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
+    .password-toggle:hover {
+      color: #c49a00 !important;
     }
 
-    .error-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
+    mat-card-actions {
+      text-align: center;
+    }
+
+    mat-card-actions span {
+      font-size: 14px;
     }
 
     a {
-      color: #007bff;
+      color: #c49a00;
       text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid transparent;
     }
 
     a:hover {
-      text-decoration: underline;
+      color: #e4b300;
+      border-bottom-color: #e4b300;
+    }
+
+    mat-spinner {
+      margin-right: 8px;
     }
   `]
 })
@@ -132,6 +152,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -168,5 +189,9 @@ export class LoginComponent {
         }
       });
     }
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 }

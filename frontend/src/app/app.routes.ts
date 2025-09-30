@@ -6,29 +6,26 @@ import { AdminComponent } from './components/admin/admin.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { AppLayoutComponent } from './layout/app-layout.component';
+import { ActivitiesComponent } from './components/activities/activities.component';
+import { ActivityCategoriesComponent } from './components/activity-categories/activity-categories.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'users',
-    component: UsersComponent,
+    path: '',
     canActivate: [authGuard],
-    data: { permissions: ['view users'] }
+    component: AppLayoutComponent,
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'users', component: UsersComponent,  },
+      { path: 'roles', component: AdminComponent,  },
+      // Placeholder routes for activities (create stub components later if needed)
+      { path: 'activities', component: ActivitiesComponent,  },
+      { path: 'activity-categories', component: ActivityCategoriesComponent,  },
+      { path: 'admin', component: AdminComponent,  },
+    ]
   },
-  {
-    path: 'admin',
-    component: AdminComponent,
-    canActivate: [authGuard],
-    data: { roles: ['admin'] }
-  },
-  {
-    path: 'unauthorized',
-    component: UnauthorizedComponent
-  },
+  { path: 'unauthorized', component: UnauthorizedComponent },
 ];

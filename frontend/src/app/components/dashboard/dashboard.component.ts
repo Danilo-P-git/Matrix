@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/auth.model';
+import { MatCardModule } from '@angular/material/card';
 
 interface DashboardStats {
   totalUsers: number;
@@ -21,161 +22,51 @@ interface Activity {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, MatCardModule],
   template: `
-    <div class="dashboard">
-      <header class="header">
-        <h1>Dashboard</h1>
-        <div class="user-info">
-          <span *ngIf="user">Welcome, {{ user.name }}!</span>
-          <button (click)="logout()" class="logout-btn">Logout</button>
-        </div>
-      </header>
+    <div class="dashboard-shell">
+      <div class="page-head">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="subtitle" *ngIf="user">Bentornato <strong>{{ user.name }}</strong></p>
+      </div>
 
-      <main class="content">
-        <div class="user-card" *ngIf="user">
-          <h2>User Information</h2>
-          <p><strong>Name:</strong> {{ user.name }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-
-          <div *ngIf="user.roles && user.roles.length > 0">
-            <h3>Roles:</h3>
-            <ul>
-              <li *ngFor="let role of user.roles">{{ role.name }}</li>
+      <div class="cards-grid">
+        <mat-card class="dash-card">
+          <div class="card-body">
+            <h2>Stato Sistema</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis elit a dolor tempor.</p>
+            <ul class="meta-list">
+              <li><span>Utenti:</span> {{ stats.totalUsers }}</li>
+              <li><span>Ruoli:</span> {{ stats.totalRoles }}</li>
+              <li><span>Permessi:</span> {{ stats.totalPermissions }}</li>
             </ul>
           </div>
-
-          <ng-container *ngIf="user.all_permissions && user.all_permissions.length > 0; else elseTemplate">
-            <h3>Permissions:</h3>
-            <ul>
-              <li *ngFor="let permission of user.all_permissions">{{ permission?.name }}</li>
-            </ul>
-          </ng-container>
-          <ng-template #elseTemplate>
-            <p>No permissions found.</p>
-          </ng-template>
-
-
+        </mat-card>
+        <mat-card class="dash-card">
+          <div class="card-body">
+            <h2>Attività Recenti</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, animi.</p>
+            <div class="placeholder-block">Integrazione attività in arrivo...</div>
           </div>
-
-        <div class="actions">
-          <h2>Available Actions</h2>
-          <div class="action-buttons">
-            <a
-              *ngIf="hasRole('admin')"
-              routerLink="/admin"
-              class="action-btn admin-btn"
-            >
-              Admin Panel
-            </a>
-
-            <a
-              *ngIf="hasPermission('view users')"
-              routerLink="/users"
-              class="action-btn"
-            >
-              View Users
-            </a>
-
-            <button
-              (click)="logout()"
-              class="action-btn danger-btn"
-            >
-              Logout All Devices
-            </button>
-          </div>
-        </div>
-      </main>
+        </mat-card>
+      </div>
     </div>
   `,
   styles: [`
-    .dashboard {
-      min-height: 100vh;
-      background-color: #f8f9fa;
-    }
-
-    .header {
-      background: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .logout-btn {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .content {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .user-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .actions {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .action-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-    }
-
-    .admin-btn {
-      background-color: #28a745;
-    }
-
-    .danger-btn {
-      background-color: #dc3545;
-    }
-
-    .action-btn:hover {
-      opacity: 0.9;
-    }
-
-    ul {
-      margin: 0.5rem 0;
-      padding-left: 1.5rem;
-    }
+    .dashboard-shell { display: flex; flex-direction: column; gap: 32px; }
+    .page-head { display: flex; flex-direction: column; gap: 4px; }
+    .page-title { font-size: 22px; font-weight: 600; letter-spacing: .5px; margin: 0; }
+    .subtitle { margin: 0; font-size: 13px; color: #a3a3a3; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
+    .dash-card { padding: 0; }
+    .card-body { padding: 24px 24px 26px; display: flex; flex-direction: column; gap: 18px; }
+    h2 { font-size: 16px; font-weight: 500; margin: 0; letter-spacing: .5px; }
+    p { margin: 0; font-size: 13.5px; line-height: 1.55; color: #c8c8c8; }
+    .meta-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+    .meta-list li { display: flex; gap: 6px; color: #d5d5d5; }
+    .meta-list span { color: #9b9b9b; }
+    .placeholder-block { background: #1c1c1c; border: 1px dashed #303030; padding: 14px 16px; font-size: 12.5px; color: #8d8d8d; border-radius: 8px; }
+    @media (max-width: 640px) { .cards-grid { grid-template-columns: 1fr; } }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -205,8 +96,8 @@ export class DashboardComponent implements OnInit {
 
     // Refresh user data to get latest roles/permissions
     this.authService.getCurrentUser().subscribe({
-      next: (res) => { this.user = res; },
-      error: (error) => {
+  next: (res: User | null) => { this.user = res; },
+  error: (error: Error) => {
         if (!/401|Non autenticato/i.test(error.message)) {
           console.error('Error loading user data:', error);
         }
@@ -330,7 +221,7 @@ export class DashboardComponent implements OnInit {
       next: () => {
         // AuthService handles navigation
       },
-      error: (error) => {
+  error: (error: Error) => {
         console.error('Logout error:', error);
       }
     });

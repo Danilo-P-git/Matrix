@@ -1,1 +1,313 @@
-/* You can add global styles to this file, and also import other style files */
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+// Define custom Matrix gold palette
+$matrix-gold-palette: (
+  0: #000000,
+  10: #1f1a00,
+  20: #342d00,
+  25: #413600,
+  30: #4e4000,
+  35: #5c4a00,
+  40: #6a5500,
+  50: #876b00,
+  60: #a58200,
+  70: #c49a00,
+  80: #e4b300,
+  90: #ffcc47,
+  95: #ffe08a,
+  98: #fff0c7,
+  99: #fff8e1,
+  100: #ffffff,
+);
+
+// Define custom Matrix dark palette
+$matrix-dark-palette: (
+  0: #ffffff,
+  10: #f5f5f5,
+  20: #e5e5e5,
+  25: #d9d9d9,
+  30: #cccccc,
+  35: #b8b8b8,
+  40: #a3a3a3,
+  50: #737373,
+  60: #525252,
+  70: #404040,
+  80: #262626,
+  90: #171717,
+  95: #0f0f0f,
+  98: #080808,
+  99: #050505,
+  100: #000000,
+);
+
+html {
+  @include mat.theme((
+    color: (
+      primary: $matrix-gold-palette,
+      tertiary: $matrix-dark-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  color-scheme: dark;
+  /* Tailwind-like neutral dark background */
+  background: radial-gradient(circle at 25% 20%, #111111 0%, #0d0d0d 45%, #090909 100%);
+  color: #e5e5e5;
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  min-height: 100vh;
+}
+/* -------------------------------------------------------------------------- */
+/* Tailwind-like Design Tokens (CSS Variables)                                */
+/* -------------------------------------------------------------------------- */
+:root {
+  /* Core palette */
+  --color-bg: #0b0b0b;
+  --color-surface: #121212;
+  --color-surface-alt: #161616;
+  --color-surface-hover: #1c1c1c;
+  --color-border: #262626;
+  --color-border-strong: #303030;
+  --color-divider: #1f1f1f;
+  --color-text: #e5e5e5;
+  --color-text-muted: #9ca3af; /* tw zinc-400/gray-400 style */
+  --color-text-subtle: #6b7280;
+  --color-accent: #c49a00;
+  --color-accent-hover: #e4b300;
+  --color-accent-soft: rgba(196, 154, 0, 0.08);
+  --color-danger: #ff6b6b;
+  --color-danger-soft: rgba(255, 107, 107, 0.12);
+
+  /* Shadows (inspired by Tailwind) */
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.5);
+  --shadow: 0 2px 4px -2px rgba(0,0,0,0.55), 0 4px 6px -1px rgba(0,0,0,0.45);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.55), 0 4px 6px -4px rgba(0,0,0,0.5);
+  --shadow-inner: inset 0 1px 0 0 rgba(255,255,255,0.03);
+
+  /* Focus ring */
+  --ring-color: rgba(196,154,0,0.45);
+  --ring-inner: rgba(196,154,0,0.25);
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
+/* Matrix Theme Global Customizations */
+
+// Global card component overrides
+mat-card-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px 20px !important;
+}
+
+mat-card-title {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  color: #f5f5f5 !important;
+  margin: 0 !important;
+  letter-spacing: 0.025em;
+}
+
+mat-card-subtitle {
+  font-size: 14px !important;
+  color: #a3a3a3 !important;
+  margin-top: 4px !important;
+  font-weight: 400;
+}
+
+mat-card-content {
+  padding: 0 24px 20px !important;
+}
+
+mat-card-actions {
+  justify-content: center;
+  padding: 16px 24px 24px !important;
+  background: transparent;
+  border-top: 1px solid var(--color-divider);
+}
+
+mat-card-actions span {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.mat-mdc-card {
+  /* Stato base già 'attivo' come il precedente hover */
+  background: var(--color-surface-hover) !important;
+  border: 1px solid var(--color-border-strong) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--color-text);
+  overflow: hidden;
+  position: relative;
+  /* Nessuna ombra */
+  box-shadow: none !important;
+  /* Transizioni solo per interni (ad esempio se in futuro aggiungi focus) */
+  transition: background .2s ease, border-color .2s ease;
+
+  .mat-mdc-card-title {
+    color: #f5f5f5 !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em;
+  }
+
+  .mat-mdc-card-subtitle {
+    color: var(--color-text-muted) !important;
+    font-weight: 400;
+  }
+}
+
+// Form field overrides
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--color-surface) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+
+  &:hover .mat-mdc-text-field-wrapper {
+    border-color: var(--color-border-strong);
+  }
+
+  &.mat-focused .mat-mdc-text-field-wrapper {
+    background-color: var(--color-surface-alt) !important;
+    border-color: var(--color-accent);
+  }
+
+  .mat-mdc-floating-label {
+    color: var(--color-text-subtle) !important;
+    font-weight: 400;
+  }
+
+  &.mat-focused .mat-mdc-floating-label {
+    color: var(--color-accent) !important;
+  }
+
+  .mat-mdc-form-field-error {
+    color: var(--color-danger) !important;
+    font-size: 13px;
+  }
+}
+
+// Input styling
+.mat-mdc-input-element {
+  color: #e5e5e5 !important;
+
+  &::placeholder {
+    color: #737373 !important;
+  }
+}
+
+// Button overrides
+.mat-mdc-button.mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  background: var(--color-accent) !important;
+  color: #000 !important;
+  font-weight: 500;
+  border-radius: var(--radius) !important;
+  border: 1px solid rgba(196,154,0,0.35);
+  box-shadow: var(--shadow-sm), var(--shadow-inner);
+  transition: background .2s ease, box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    background: var(--color-accent-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow), var(--shadow-inner);
+    border-color: rgba(196,154,0,0.55);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm) !important;
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 2px #000, 0 0 0 5px var(--ring-color);
+  }
+
+  &:disabled {
+    background: #3a3a3a !important;
+    color: rgba(229, 229, 229, 0.45) !important;
+    border-color: #2e2e2e;
+    transform: none !important;
+    box-shadow: none;
+  }
+}
+
+// Icon styling
+.mat-icon {
+  color: var(--color-text-subtle);
+
+  &.mat-mdc-form-field-icon-suffix {
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+}
+
+// Special gold icon class
+.mat-icon.gold {
+  color: var(--color-accent);
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+// Utility classes (Tailwind-like helpers)
+.text-muted { color: var(--color-text-muted) !important; }
+.border { border: 1px solid var(--color-border) !important; }
+.border-strong { border: 1px solid var(--color-border-strong) !important; }
+.surface { background: var(--color-surface) !important; }
+.surface-alt { background: var(--color-surface-alt) !important; }
+.accent { color: var(--color-accent) !important; }
+.ring-focus { box-shadow: 0 0 0 2px #000, 0 0 0 5px var(--ring-color) !important; }
+
+// Error styling
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  color: #ff6b6b;
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+
+  .mat-icon {
+    color: #ff6b6b;
+    font-size: 18px;
+  }
+}
+
+// Spinner override
+.mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: #000000;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
