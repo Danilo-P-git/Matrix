@@ -24,49 +24,242 @@ interface Activity {
   standalone: true,
   imports: [CommonModule, MatCardModule],
   template: `
-    <div class="dashboard-shell">
-      <div class="page-head">
-        <h1 class="page-title">Dashboard</h1>
-        <p class="subtitle" *ngIf="user">Bentornato <strong>{{ user.name }}</strong></p>
-      </div>
-
-      <div class="cards-grid">
-        <mat-card class="dash-card">
-          <div class="card-body">
-            <h2>Stato Sistema</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis elit a dolor tempor.</p>
-            <ul class="meta-list">
-              <li><span>Utenti:</span> {{ stats.totalUsers }}</li>
-              <li><span>Ruoli:</span> {{ stats.totalRoles }}</li>
-              <li><span>Permessi:</span> {{ stats.totalPermissions }}</li>
-            </ul>
-          </div>
-        </mat-card>
-        <mat-card class="dash-card">
-          <div class="card-body">
-            <h2>Attività Recenti</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, animi.</p>
-            <div class="placeholder-block">Integrazione attività in arrivo...</div>
-          </div>
-        </mat-card>
+<div class="space-y-5">
+  <div class="kt-alert kt-alert-light kt-alert-primary" id="alert_1">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a primary alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
       </div>
     </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-success" id="alert_2">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a success alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-info" id="alert_3">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is an info alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-destructive" id="alert_4">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a destructive alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-warning" id="alert_5">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a warning alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
   `,
   styles: [`
-    .dashboard-shell { display: flex; flex-direction: column; gap: 32px; }
-    .page-head { display: flex; flex-direction: column; gap: 4px; }
-    .page-title { font-size: 22px; font-weight: 600; letter-spacing: .5px; margin: 0; }
-    .subtitle { margin: 0; font-size: 13px; color: #a3a3a3; }
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
-    .dash-card { padding: 0; }
-    .card-body { padding: 24px 24px 26px; display: flex; flex-direction: column; gap: 18px; }
-    h2 { font-size: 16px; font-weight: 500; margin: 0; letter-spacing: .5px; }
-    p { margin: 0; font-size: 13.5px; line-height: 1.55; color: #c8c8c8; }
-    .meta-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
-    .meta-list li { display: flex; gap: 6px; color: #d5d5d5; }
-    .meta-list span { color: #9b9b9b; }
-    .placeholder-block { background: #1c1c1c; border: 1px dashed #303030; padding: 14px 16px; font-size: 12.5px; color: #8d8d8d; border-radius: 8px; }
-    @media (max-width: 640px) { .cards-grid { grid-template-columns: 1fr; } }
+
   `]
 })
 export class DashboardComponent implements OnInit {

@@ -8,7 +8,7 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   const router = inject(Router);
 
   if (!authService.getToken()) {
-    router.navigate(['/unauthorized'], { queryParams: { returnUrl: state.url } });
+    router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 
@@ -17,12 +17,12 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   if (user) {
     const requiredRoles = route.data['roles'] as string[];
     if (requiredRoles && requiredRoles.length && !requiredRoles.some(r => authService.hasRole(r))) {
-      router.navigate(['/unauthorized']);
+      router.navigate(['/login']);
       return false;
     }
     const requiredPermissions = route.data['permissions'] as string[];
     if (requiredPermissions && requiredPermissions.length && !requiredPermissions.some(p => authService.hasPermission(p))) {
-      router.navigate(['/unauthorized']);
+      router.navigate(['/login']);
       return false;
     }
   }

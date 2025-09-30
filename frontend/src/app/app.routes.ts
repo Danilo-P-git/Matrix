@@ -1,14 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { UsersComponent } from './components/users/users.component';
-import { AdminComponent } from './components/admin/admin.component';
-import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { authGuard } from './guards/auth.guard';
-import { roleGuard } from './guards/role.guard';
 import { AppLayoutComponent } from './layout/app-layout.component';
-import { ActivitiesComponent } from './components/activities/activities.component';
-import { ActivityCategoriesComponent } from './components/activity-categories/activity-categories.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -18,14 +11,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     component: AppLayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'users', component: UsersComponent,  },
-      { path: 'roles', component: AdminComponent,  },
-      // Placeholder routes for activities (create stub components later if needed)
-      { path: 'activities', component: ActivitiesComponent,  },
-      { path: 'activity-categories', component: ActivityCategoriesComponent,  },
-      { path: 'admin', component: AdminComponent,  },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./modules/dashboard/dashboard-module').then(m => m.DashboardModule)
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./modules/users/users.module').then(m => m.UsersModule)
+      }
     ]
-  },
-  { path: 'unauthorized', component: UnauthorizedComponent },
+  }
 ];

@@ -16,137 +16,56 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   template: `
-    <div class="login-container">
-      <mat-card class="login-card">
-        <mat-card-header>
-          <img mat-card-image width="100%" height="100%" src="https://midichlorians.it/wp-content/uploads/2022/06/Midichlorians-Lightsaber-Academy.png" alt="Matrix Logo">
-          <mat-card-title>MATRIX</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="nome@dominio.com">
-              <mat-icon matSuffix>email</mat-icon>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email obbligatoria</mat-error>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Email non valida</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Password</mat-label>
-              <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password">
-              <mat-icon matSuffix (click)="togglePassword()" class="password-toggle">
-                {{showPassword ? 'visibility_off' : 'visibility'}}
-              </mat-icon>
-              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password obbligatoria</mat-error>
-            </mat-form-field>
-
-            <div *ngIf="errorMessage" class="error-alert">
-              <mat-icon>error</mat-icon>
-              <span>{{ errorMessage }}</span>
-            </div>
-
-            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
-              <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
-              {{ isLoading ? 'Accesso...' : 'Entra' }}
+    <div class="min-h-screen w-full flex items-center justify-center px-4 py-10 bg-[#0d0d0d]">
+      <mat-card class="w-full max-w-sm relative border border-zinc-800 bg-[#161616] rounded-xl px-6 pt-6 pb-4 flex flex-col gap-6">
+        <div class="flex flex-col items-center gap-4">
+          <img class="h-20 w-auto object-contain" src="https://midichlorians.it/wp-content/uploads/2022/06/Midichlorians-Lightsaber-Academy.png" alt="Matrix Logo" />
+          <h1 class="text-amber-400 tracking-widest font-semibold text-sm">MATRIX</h1>
+        </div>
+        <form class="flex flex-col gap-5" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          <!-- Email -->
+          <mat-form-field appearance="fill" class="w-full text-sm">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email" placeholder="nome@dominio.com" class="text-sm">
+            <button mat-icon-button matSuffix type="button" disabled class="!text-zinc-500">
+              <mat-icon>mail</mat-icon>
             </button>
-          </form>
-        </mat-card-content>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email obbligatoria</mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Email non valida</mat-error>
+          </mat-form-field>
 
-        <mat-card-actions>
-          <span>Non hai un account? <a routerLink="/register">Registrati</a></span>
-        </mat-card-actions>
+          <!-- Password -->
+          <mat-form-field appearance="fill" class="w-full text-sm">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="current-password" class="text-sm">
+            <button mat-icon-button matSuffix type="button" (click)="togglePassword()" [attr.aria-label]="showPassword ? 'Nascondi password' : 'Mostra password'" class="!text-zinc-500 hover:!text-amber-400 transition-colors">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password obbligatoria</mat-error>
+          </mat-form-field>
+
+          <!-- Error -->
+          <div *ngIf="errorMessage" class="flex items-start gap-2 rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            <mat-icon class="!text-red-400 !w-4 !h-4 !text-base">error</mat-icon>
+            <span class="leading-snug">{{ errorMessage }}</span>
+          </div>
+
+          <!-- Submit -->
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading" class="w-full h-11 font-medium tracking-wide flex items-center justify-center gap-2 text-sm">
+              <mat-spinner *ngIf="isLoading" diameter="18"></mat-spinner>
+              <span>{{ isLoading ? 'Accesso...' : 'Entra' }}</span>
+            </button>
+
+          <!-- Link register -->
+          <div class="pt-1 text-center text-[11px] text-zinc-500">
+            Non hai un account?
+            <a routerLink="/register" class="text-amber-400 hover:text-amber-300 underline underline-offset-2 decoration-amber-400/50">Registrati</a>
+          </div>
+        </form>
       </mat-card>
     </div>
   `,
-  styles: [`
-    .login-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 24px;
-      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-    }
-
-    .login-card {
-      max-width: 420px;
-      width: 100%;
-      position: relative;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    mat-form-field {
-      width: 100%;
-    }
-
-    button {
-      height: 52px;
-      margin-top: 8px;
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
-
-    .error-alert {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.3);
-      border-radius: 8px;
-      color: #ff6b6b;
-      font-size: 14px;
-
-      mat-icon {
-        color: #ff6b6b;
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    .password-toggle {
-      cursor: pointer;
-      transition: color 0.2s ease;
-    }
-
-    .password-toggle:hover {
-      color: #c49a00 !important;
-    }
-
-    mat-card-actions {
-      text-align: center;
-    }
-
-    mat-card-actions span {
-      font-size: 14px;
-    }
-
-    a {
-      color: #c49a00;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid transparent;
-    }
-
-    a:hover {
-      color: #e4b300;
-      border-bottom-color: #e4b300;
-    }
-
-    mat-spinner {
-      margin-right: 8px;
-    }
-  `]
+  styles: []
 })
 export class LoginComponent {
   loginForm: FormGroup;
