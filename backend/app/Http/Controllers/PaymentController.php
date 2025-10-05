@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\UpdatePaymentRequest;
+
+class PaymentController extends Controller
+{
+    public function index(): JsonResponse
+    {
+        try {
+            $payments = Payment::with(['user', 'activity', 'event'])
+                             ->orderBy('created_at', 'desc')
+                             ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $payments,
+                'message' => 'Pagamenti recuperati con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nel recupero dei pagamenti',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function store(StorePaymentRequest $request): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $payment = Payment::create($validatedData);
+
+            return response()->json([
+                'success' => true,
+                'data' => $payment->load(['user', 'activity', 'event']),
+                'message' => 'Pagamento creato con successo'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nella creazione del pagamento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show(Payment $payment): JsonResponse
+    {
+        try {
+            $payment->load(['user', 'activity', 'event']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $payment,
+                'message' => 'Pagamento recuperato con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nel recupero del pagamento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(UpdatePaymentRequest $request, Payment $payment): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $payment->update($validatedData);
+
+            return response()->json([
+                'success' => true,
+                'data' => $payment->fresh(['user', 'activity', 'event']),
+                'message' => 'Pagamento aggiornato con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nell\'aggiornamento del pagamento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Payment $payment): JsonResponse
+    {
+        try {
+            $payment->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pagamento eliminato con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore durante l\'eliminazione del pagamento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getByUser($userId): JsonResponse
+    {
+        try {
+            $payments = Payment::where('user_id', $userId)
+                             ->with(['activity', 'event'])
+                             ->orderBy('created_at', 'desc')
+                             ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $payments,
+                'message' => 'Pagamenti utente recuperati con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nel recupero dei pagamenti utente',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getByStatus($status): JsonResponse
+    {
+        try {
+            $payments = Payment::where('status', $status)
+                             ->with(['user', 'activity', 'event'])
+                             ->orderBy('created_at', 'desc')
+                             ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $payments,
+                'message' => 'Pagamenti per status recuperati con successo'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nel recupero dei pagamenti per status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function markAsPaid(Payment $payment): JsonResponse
+    {
+        try {
+            $payment->update(['status' => 'completato']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $payment->fresh(['user', 'activity', 'event']),
+                'message' => 'Pagamento segnato come completato'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Errore nella modifica dello status del pagamento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}

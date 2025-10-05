@@ -11,20 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->text('note')->nullable();
-            $table->string('path')->nullable();
-            $table->string('type')->nullable();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('activity_id')->constrained();
+            $table->dateTime('exit_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
-
-
-
     }
 
     /**
@@ -32,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('subscriptions');
     }
 };

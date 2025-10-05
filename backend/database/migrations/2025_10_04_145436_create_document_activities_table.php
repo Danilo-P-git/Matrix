@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('document_activities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('document_id')->constrained();
+            $table->foreignId('activity_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            // eventi da aggiungere in migrazione successiva
             $table->timestamps();
         });
     }
