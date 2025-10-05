@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/auth.model';
+import { MatCardModule } from '@angular/material/card';
 
 interface DashboardStats {
   totalUsers: number;
@@ -21,161 +22,244 @@ interface Activity {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, MatCardModule],
   template: `
-    <div class="dashboard">
-      <header class="header">
-        <h1>Dashboard</h1>
-        <div class="user-info">
-          <span *ngIf="user">Welcome, {{ user.name }}!</span>
-          <button (click)="logout()" class="logout-btn">Logout</button>
-        </div>
-      </header>
-
-      <main class="content">
-        <div class="user-card" *ngIf="user">
-          <h2>User Information</h2>
-          <p><strong>Name:</strong> {{ user.name }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-
-          <div *ngIf="user.roles && user.roles.length > 0">
-            <h3>Roles:</h3>
-            <ul>
-              <li *ngFor="let role of user.roles">{{ role.name }}</li>
-            </ul>
-          </div>
-
-          <ng-container *ngIf="user.all_permissions && user.all_permissions.length > 0; else elseTemplate">
-            <h3>Permissions:</h3>
-            <ul>
-              <li *ngFor="let permission of user.all_permissions">{{ permission?.name }}</li>
-            </ul>
-          </ng-container>
-          <ng-template #elseTemplate>
-            <p>No permissions found.</p>
-          </ng-template>
-
-
-          </div>
-
-        <div class="actions">
-          <h2>Available Actions</h2>
-          <div class="action-buttons">
-            <a
-              *ngIf="hasRole('admin')"
-              routerLink="/admin"
-              class="action-btn admin-btn"
-            >
-              Admin Panel
-            </a>
-
-            <a
-              *ngIf="hasPermission('view users')"
-              routerLink="/users"
-              class="action-btn"
-            >
-              View Users
-            </a>
-
-            <button
-              (click)="logout()"
-              class="action-btn danger-btn"
-            >
-              Logout All Devices
-            </button>
-          </div>
-        </div>
-      </main>
+<div class="space-y-5">
+  <div class="kt-alert kt-alert-light kt-alert-primary" id="alert_1">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
     </div>
+    <div class="kt-alert-title">This is a primary alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-success" id="alert_2">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a success alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-info" id="alert_3">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is an info alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-destructive" id="alert_4">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a destructive alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="kt-alert kt-alert-light kt-alert-warning" id="alert_5">
+    <div class="kt-alert-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-info"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+    <div class="kt-alert-title">This is a warning alert</div>
+    <div class="kt-alert-toolbar">
+      <div class="kt-alert-actions">
+        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+          Upgrade</button
+        ><button class="kt-alert-close" data-kt-dismiss="#alert_5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
   `,
   styles: [`
-    .dashboard {
-      min-height: 100vh;
-      background-color: #f8f9fa;
-    }
 
-    .header {
-      background: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .logout-btn {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .content {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .user-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .actions {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .action-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-    }
-
-    .admin-btn {
-      background-color: #28a745;
-    }
-
-    .danger-btn {
-      background-color: #dc3545;
-    }
-
-    .action-btn:hover {
-      opacity: 0.9;
-    }
-
-    ul {
-      margin: 0.5rem 0;
-      padding-left: 1.5rem;
-    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -205,8 +289,8 @@ export class DashboardComponent implements OnInit {
 
     // Refresh user data to get latest roles/permissions
     this.authService.getCurrentUser().subscribe({
-      next: (res) => { this.user = res; },
-      error: (error) => {
+  next: (res: User | null) => { this.user = res; },
+  error: (error: Error) => {
         if (!/401|Non autenticato/i.test(error.message)) {
           console.error('Error loading user data:', error);
         }
@@ -330,7 +414,7 @@ export class DashboardComponent implements OnInit {
       next: () => {
         // AuthService handles navigation
       },
-      error: (error) => {
+  error: (error: Error) => {
         console.error('Logout error:', error);
       }
     });

@@ -59,4 +59,52 @@ class User extends Authenticatable
         }
         return $this->getAllPermissions()->unique('id')->values();
     }
+
+    /**
+     * Get all documents for this user
+     */
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    /**
+     * Get all subscriptions for this user
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * Get all payments for this user
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get all document activities for this user
+     */
+    public function documentActivities()
+    {
+        return $this->hasMany(DocumentActivity::class);
+    }
+
+    /**
+     * Get all equipment through subscriptions
+     */
+    public function equipment()
+    {
+        return $this->hasManyThrough(Equipment::class, Subscription::class);
+    }
+
+    /**
+     * Get all attendances for this user
+     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

@@ -1,34 +1,24 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { UsersComponent } from './components/users/users.component';
-import { AdminComponent } from './components/admin/admin.component';
-import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { authGuard } from './guards/auth.guard';
-import { roleGuard } from './guards/role.guard';
+import { AppLayoutComponent } from './layout/app-layout.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'users',
-    component: UsersComponent,
+    path: '',
     canActivate: [authGuard],
-    data: { permissions: ['view users'] }
-  },
-  {
-    path: 'admin',
-    component: AdminComponent,
-    canActivate: [authGuard],
-    data: { roles: ['admin'] }
-  },
-  {
-    path: 'unauthorized',
-    component: UnauthorizedComponent
-  },
+    component: AppLayoutComponent,
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./modules/dashboard/dashboard-module').then(m => m.DashboardModule)
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./modules/users/users.module').then(m => m.UsersModule)
+      }
+    ]
+  }
 ];
