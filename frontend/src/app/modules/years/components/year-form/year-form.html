@@ -1,0 +1,172 @@
+<div class="year-form-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0">{{ pageTitle }}</h1>
+      <p class="text-muted mb-0">
+        {{ isEditMode ? 'Modifica i dettagli dell\'anno' : 'Crea un nuovo anno accademico/sportivo' }}
+      </p>
+    </div>
+    <div>
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+        <i class="fas fa-arrow-left me-2"></i>
+        Torna alla lista
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center py-5">
+    <app-loading-spinner message="Caricamento anno..."></app-loading-spinner>
+  </div>
+
+  <!-- Error Alert -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+  </div>
+
+  <!-- Form -->
+  <div class="card" *ngIf="!loading">
+    <div class="card-body">
+      <form [formGroup]="yearForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Nome -->
+          <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">
+              Nome <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              [class.is-invalid]="nameError"
+              placeholder="Es: Anno Accademico 2024-2025"
+            />
+            <div class="invalid-feedback" *ngIf="nameError">
+              {{ nameError }}
+            </div>
+          </div>
+
+          <!-- Stato Attivo -->
+          <div class="col-md-6 mb-3">
+            <div class="form-check form-switch mt-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="is_active"
+                formControlName="is_active"
+              />
+              <label class="form-check-label" for="is_active">
+                Anno attivo
+              </label>
+              <small class="form-text text-muted d-block">
+                Un anno attivo è disponibile per nuove iscrizioni e attività
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Data Inizio -->
+          <div class="col-md-6 mb-3">
+            <label for="start_date" class="form-label">
+              Data Inizio <span class="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              id="start_date"
+              class="form-control"
+              formControlName="start_date"
+              [class.is-invalid]="startDateError"
+            />
+            <div class="invalid-feedback" *ngIf="startDateError">
+              {{ startDateError }}
+            </div>
+          </div>
+
+          <!-- Data Fine -->
+          <div class="col-md-6 mb-3">
+            <label for="end_date" class="form-label">
+              Data Fine <span class="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              id="end_date"
+              class="form-control"
+              formControlName="end_date"
+              [class.is-invalid]="endDateError"
+            />
+            <div class="invalid-feedback" *ngIf="endDateError">
+              {{ endDateError }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Descrizione -->
+        <div class="mb-4">
+          <label for="description" class="form-label">Descrizione</label>
+          <textarea
+            id="description"
+            class="form-control"
+            formControlName="description"
+            rows="4"
+            [class.is-invalid]="descriptionError"
+            placeholder="Inserisci una descrizione opzionale per questo anno..."
+          ></textarea>
+          <div class="invalid-feedback" *ngIf="descriptionError">
+            {{ descriptionError }}
+          </div>
+          <small class="form-text text-muted">
+            Caratteri rimanenti: {{ 1000 - (yearForm.get('description')?.value?.length || 0) }}
+          </small>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-end gap-2">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="onCancel()"
+            [disabled]="submitting"
+          >
+            <i class="fas fa-times me-2"></i>
+            Annulla
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="yearForm.invalid || submitting"
+          >
+            <i class="fas fa-spinner fa-spin me-2" *ngIf="submitting"></i>
+            <i class="fas fa-save me-2" *ngIf="!submitting"></i>
+            {{ submitButtonText }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Year Info Card (Edit Mode) -->
+  <div class="card mt-4" *ngIf="isEditMode && year && !loading">
+    <div class="card-header">
+      <h6 class="card-title mb-0">
+        <i class="fas fa-info-circle me-2"></i>
+        Informazioni Anno
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <small class="text-muted">Data Creazione</small>
+          <p class="mb-2">{{ year.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted">Ultimo Aggiornamento</small>
+          <p class="mb-2">{{ year.updated_at | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+  <!-- Search Bar -->
+  <div class="p-4 border-b border-gray-200" *ngIf="searchable">
+    <mat-form-field appearance="outline" class="w-full max-w-md">
+      <mat-label>Cerca...</mat-label>
+      <input matInput 
+             [(ngModel)]="searchTerm" 
+             (input)="onSearchChange()"
+             placeholder="Inserisci termine di ricerca">
+      <mat-icon matPrefix>search</mat-icon>
+      <button mat-icon-button matSuffix *ngIf="searchTerm" (click)="searchTerm=''; onSearchChange()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading Progress Bar -->
+  <mat-progress-bar mode="indeterminate" *ngIf="loading" class="w-full"></mat-progress-bar>
+
+  <!-- Table Container -->
+  <div class="overflow-x-auto">
+    <table mat-table 
+           [dataSource]="dataSource" 
+           matSort 
+           (matSortChange)="onSortChange($event)"
+           class="w-full">
+
+      <!-- Dynamic Columns -->
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column.key">
+        <!-- Sortable Header -->
+        <ng-container *ngIf="column.sortable">
+          <th mat-header-cell 
+              *matHeaderCellDef 
+              [mat-sort-header]="column.key"
+              class="font-semibold text-gray-900 bg-gray-50">
+            {{ column.label }}
+          </th>
+        </ng-container>
+        <!-- Non-sortable Header -->
+        <ng-container *ngIf="!column.sortable">
+          <th mat-header-cell 
+              *matHeaderCellDef 
+              class="font-semibold text-gray-900 bg-gray-50">
+            {{ column.label }}
+          </th>
+        </ng-container>
+        <td mat-cell *matCellDef="let element" class="py-3 px-4">
+          <ng-container [ngSwitch]="column.type">
+            <!-- Boolean Type -->
+            <span *ngSwitchCase="'boolean'" 
+                  [class]="getCellValue(element, column) ? 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800' : 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800'">
+              <mat-icon class="w-3 h-3 mr-1" [class]="getCellValue(element, column) ? 'text-green-500' : 'text-red-500'">
+                {{ getCellValue(element, column) ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              {{ getCellValue(element, column) ? 'Sì' : 'No' }}
+            </span>
+            
+            <!-- Date Type -->
+            <span *ngSwitchCase="'date'" class="text-gray-900">
+              {{ getCellValue(element, column) | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+            
+            <!-- Number Type -->
+            <span *ngSwitchCase="'number'" class="font-mono text-gray-900">
+              {{ getCellValue(element, column) | number:'1.2-2' }}
+            </span>
+            
+            <!-- Default Text Type -->
+            <span *ngSwitchDefault class="text-gray-900">
+              {{ getCellValue(element, column) }}
+            </span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions" *ngIf="actions.length > 0">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-900 bg-gray-50 w-32">
+          Azioni
+        </th>
+        <td mat-cell *matCellDef="let element" class="py-3 px-4">
+          <div class="flex space-x-2">
+            <button *ngFor="let action of actions"
+                    mat-icon-button
+                    [color]="action.color || 'primary'"
+                    [matTooltip]="action.label"
+                    (click)="executeAction(action, element)"
+                    [style.display]="isActionVisible(action, element) ? 'inline-flex' : 'none'"
+                    class="hover:bg-gray-100">
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Header and Row Definitions -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-gray-50"></tr>
+      <tr mat-row 
+          *matRowDef="let row; columns: displayedColumns;" 
+          class="hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100"></tr>
+
+      <!-- No Data Row -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center py-8 text-gray-500" [attr.colspan]="displayedColumns.length">
+          <div class="flex flex-col items-center space-y-2">
+            <mat-icon class="text-4xl text-gray-400">inbox</mat-icon>
+            <p class="text-lg font-medium">Nessun dato disponibile</p>
+            <p class="text-sm text-gray-400">Non ci sono elementi da visualizzare</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <mat-paginator 
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [showFirstLastButtons]="true"
+    (page)="onPageEvent($event)"
+    class="border-t border-gray-200">
+  </mat-paginator>
+</div>

@@ -18,6 +18,10 @@ export const routes: Routes = [
       {
         path: 'users',
         loadChildren: () => import('./modules/users/users.module').then(m => m.UsersModule)
+      },
+      {
+        path: 'years',
+        loadChildren: () => import('./modules/years/years-module').then(m => m.YearsModule)
       }
     ]
   }

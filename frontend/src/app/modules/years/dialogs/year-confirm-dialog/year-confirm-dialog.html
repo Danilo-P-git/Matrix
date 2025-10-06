@@ -1,0 +1,30 @@
+<div class="p-6">
+  <div class="flex items-center space-x-4 mb-4">
+    <div class="flex-shrink-0">
+      <mat-icon [class]="iconColor" class="text-3xl">{{ data.icon }}</mat-icon>
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold text-gray-900">{{ data.title }}</h2>
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <p class="text-gray-700 leading-relaxed">{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="flex space-x-3 pt-6">
+    <button mat-button 
+            type="button" 
+            (click)="onCancel()"
+            class="text-gray-600 hover:text-gray-800">
+      <mat-icon class="mr-1">close</mat-icon>
+      {{ data.cancelText }}
+    </button>
+    <button mat-raised-button 
+            [color]="confirmButtonColor" 
+            (click)="onConfirm()">
+      <mat-icon class="mr-1">check</mat-icon>
+      {{ data.confirmText }}
+    </button>
+  </mat-dialog-actions>
+</div>

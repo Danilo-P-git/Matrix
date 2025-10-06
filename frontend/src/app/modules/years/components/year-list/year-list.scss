@@ -1,0 +1,55 @@
+// Global styles for the years module
+
+:host {
+  display: block;
+}
+
+// Snackbar custom styles
+:host ::ng-deep {
+  .snackbar-success {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+
+  .snackbar-error {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+}
+
+// Statistics cards hover effect
+.mat-mdc-card {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Custom loading state
+.loading-overlay {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .flex {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
