@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use App\Http\Requests\StoreYearRequest;
 use App\Http\Requests\UpdateYearRequest;
@@ -15,25 +16,48 @@ class YearController extends Controller
     /**
      * Display a listing of the years.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $years = Year::with(['activities', 'equipment'])
-                        ->orderBy('start_date', 'desc')
-                        ->get();
+        $query = Year::with(['activities', 'equipment']);
 
-            return response()->json([
-                'success' => true,
-                'data' => $years,
-                'message' => 'Anni recuperati con successo'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving years',
-                'error' => $e->getMessage()
-            ], 500);
+        if ($request->filled('start_from') && Schema::hasColumn('years', 'start_date')) {
+            $query->whereDate('start_date', '>=', $request->start_from);
         }
+        if ($request->filled('start_to') && Schema::hasColumn('years', 'start_date')) {
+            $query->whereDate('start_date', '<=', $request->start_to);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                if (Schema::hasColumn('years', 'name')) {
+                    $q->orWhere('name', 'like', "%{$search}%");
+                }
+            });
+        }
+
+        if($request->filled('sort_by') || $request->filled('sort_direction')){
+            $sortBy = $request->input('sort_by', 'start_date');
+            $sortDirection = $request->input('sort_direction', 'desc');
+
+            if ($sortDirection !== 'asc' && $sortDirection !== 'desc') {
+                $sortDirection = 'desc';
+            }
+            if($sortBy === '')
+            {
+                $sortBy = 'name';
+            }
+            $query->orderBy($sortBy, $sortDirection);
+        }
+        if($request->filled('per_page')) {
+            $years = $query->paginate($request->integer('per_page', 1));
+        } else {
+            $years = $query->paginate(10);
+
+        }
+
+
+        return response()->json($years);
     }
 
     /**
@@ -113,19 +137,19 @@ class YearController extends Controller
             // Check if year has associated activities or equipment
             $activitiesCount = $year->activities()->count();
             $equipmentCount = $year->equipment()->count();
-            
+
             if ($activitiesCount > 0 || $equipmentCount > 0) {
                 $message = 'Impossibile eliminare l\'anno con ';
                 $dependencies = [];
-                
+
                 if ($activitiesCount > 0) {
                     $dependencies[] = $activitiesCount . ' attività associate';
                 }
-                
+
                 if ($equipmentCount > 0) {
                     $dependencies[] = $equipmentCount . ' equipaggiamenti associati';
                 }
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => $message . implode(' e ', $dependencies) . '.',

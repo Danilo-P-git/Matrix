@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 
@@ -13,25 +14,47 @@ class ActivityController extends Controller
     /**
      * Display a listing of the activities.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $activities = Activity::with(['year', 'subscriptions', 'payments', 'documents'])
-                                ->orderBy('start_date', 'desc')
-                                ->get();
+        $query = Activity::with(['year', 'subscriptions.user', 'payments.user', 'documents']);
 
-            return response()->json([
-                'success' => true,
-                'data' => $activities,
-                'message' => 'Attività recuperate con successo'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Errore nel recupero delle attività',
-                'error' => $e->getMessage()
-            ], 500);
+        // Filtri diretti su colonne note
+        if ($request->filled('year_id') && Schema::hasColumn('activities', 'year_id')) {
+            $query->where('year_id', $request->year_id);
         }
+        if ($request->filled('start_date_from') && Schema::hasColumn('activities', 'start_date')) {
+            $query->whereDate('start_date', '>=', $request->start_date_from);
+        }
+        if ($request->filled('start_date_to') && Schema::hasColumn('activities', 'start_date')) {
+            $query->whereDate('start_date', '<=', $request->start_date_to);
+        }
+
+        // Ricerca
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                if (Schema::hasColumn('activities', 'name')) {
+                    $q->orWhere('name', 'like', "%{$search}%");
+                }
+                if (Schema::hasColumn('activities', 'description')) {
+                    $q->orWhere('description', 'like', "%{$search}%");
+                }
+                $q->orWhereHas('year', function ($y) use ($search) {
+                    $y->where('name', 'like', "%{$search}%");
+                })
+                  ->orWhereHas('subscriptions.user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('payments.user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $activities = $query->orderBy('start_date', 'desc')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json($activities);
     }
 
     /**
@@ -112,23 +135,23 @@ class ActivityController extends Controller
             $subscriptionsCount = $activity->subscriptions()->count();
             $paymentsCount = $activity->payments()->count();
             $documentsCount = $activity->documents()->count();
-            
+
             if ($subscriptionsCount > 0 || $paymentsCount > 0 || $documentsCount > 0) {
                 $message = 'Impossibile eliminare l\'attività con ';
                 $dependencies = [];
-                
+
                 if ($subscriptionsCount > 0) {
                     $dependencies[] = $subscriptionsCount . ' iscrizioni associate';
                 }
-                
+
                 if ($paymentsCount > 0) {
                     $dependencies[] = $paymentsCount . ' pagamenti associati';
                 }
-                
+
                 if ($documentsCount > 0) {
                     $dependencies[] = $documentsCount . ' documenti associati';
                 }
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => $message . implode(', ', $dependencies) . '.',
@@ -323,7 +346,7 @@ class ActivityController extends Controller
     {
         try {
             $query = $request->get('q', '');
-            
+
             if (empty($query)) {
                 return response()->json([
                     'success' => false,

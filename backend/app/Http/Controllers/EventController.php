@@ -5,30 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 
 class EventController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $events = Event::with(['documentActivities', 'equipment', 'payments'])
-                          ->orderBy('start_time', 'desc')
-                          ->get();
+        $query = Event::with(['documentActivities.user', 'equipment', 'payments.user']);
 
-            return response()->json([
-                'success' => true,
-                'data' => $events,
-                'message' => 'Eventi recuperati con successo'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Errore nel recupero degli eventi',
-                'error' => $e->getMessage()
-            ], 500);
+        if ($request->filled('status') && Schema::hasColumn('events', 'status')) {
+            $query->where('status', $request->status);
         }
+        if ($request->filled('start_from') && Schema::hasColumn('events', 'start_time')) {
+            $query->where('start_time', '>=', $request->start_from);
+        }
+        if ($request->filled('start_to') && Schema::hasColumn('events', 'start_time')) {
+            $query->where('start_time', '<=', $request->start_to);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                if (Schema::hasColumn('events', 'name')) {
+                    $q->orWhere('name', 'like', "%{$search}%");
+                }
+                if (Schema::hasColumn('events', 'location')) {
+                    $q->orWhere('location', 'like', "%{$search}%");
+                }
+                $q->orWhereHas('payments.user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $events = $query->orderBy('start_time', 'desc')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json($events);
     }
 
     public function store(StoreEventRequest $request): JsonResponse
@@ -95,19 +110,19 @@ class EventController extends Controller
         try {
             $paymentsCount = $event->payments()->count();
             $equipmentCount = $event->equipment()->count();
-            
+
             if ($paymentsCount > 0 || $equipmentCount > 0) {
                 $message = 'Impossibile eliminare l\'evento con ';
                 $dependencies = [];
-                
+
                 if ($paymentsCount > 0) {
                     $dependencies[] = $paymentsCount . ' pagamenti associati';
                 }
-                
+
                 if ($equipmentCount > 0) {
                     $dependencies[] = $equipmentCount . ' equipaggiamenti associati';
                 }
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => $message . implode(' e ', $dependencies) . '.',

@@ -1,28 +1,17 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { authGuard } from './guards/auth.guard';
-import { AppLayoutComponent } from './layout/app-layout.component';
+import { FullLayout } from './shared/layouts/full-layout/full-layout';
+import { Full_Content_Routes } from './shared/routes/content.routes';
+import { Authentication_ROUTES } from './shared/routes/authentication.routes';
+import { AuthenticationLayout } from './shared/layouts/authentication-layout/authentication-layout';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
-    path: '',
-    canActivate: [authGuard],
-    component: AppLayoutComponent,
-    children: [
-      {
-        path: 'dashboard',
-        loadChildren: () => import('./modules/dashboard/dashboard-module').then(m => m.DashboardModule)
-      },
-      {
-        path: 'users',
-        loadChildren: () => import('./modules/users/users.module').then(m => m.UsersModule)
-      },
-      {
-        path: 'years',
-        loadChildren: () => import('./modules/years/years-module').then(m => m.YearsModule)
-      }
-    ]
-  }
+    path: 'auth/login',
+    loadComponent: () =>
+      import('../app/authentication/login-page/login-page').then((m) => m.LoginPage),
+  },
+  { path: '', component: FullLayout, children: Full_Content_Routes},
+  { path: '', component: AuthenticationLayout, children: Authentication_ROUTES },
 ];

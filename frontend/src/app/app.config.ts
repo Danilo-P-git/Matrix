@@ -1,28 +1,35 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, APP_INITIALIZER, inject } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
-
+import { ColorPickerDirective } from 'ngx-color-picker';
+import { ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
+import {  provideAnimations } from '@angular/platform-browser/animations';
+import { RouterModule, RouterOutlet, provideRouter } from '@angular/router';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from '../environments/environment';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { ToastrModule } from 'ngx-toastr';
+import { FlatpickrDefaults } from 'angularx-flatpickr';
+import { provideHttpClient } from '@angular/common/http';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { AuthService } from './services/auth.service';
-
-function initAuthFactory() {
-  const auth = inject(AuthService);
-  return () => auth.init();
-}
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authInterceptor]), withFetch()),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initAuthFactory,
-      multi: true
-    }
-  ]
+    provideRouter(routes),    provideZonelessChangeDetection(),
+
+        provideClientHydration(), RouterOutlet,RouterModule,BrowserModule,provideAnimations(),FlatpickrDefaults,AngularFireModule,
+
+    AngularFireDatabaseModule,BrowserModule,
+
+    AngularFirestoreModule,  provideHttpClient(),
+    AngularFireAuthModule,
+  importProvidersFrom(ColorPickerDirective, AngularFireModule.initializeApp(environment.firebase),
+
+ ToastrModule.forRoot({
+    timeOut: 15000, // 15 seconds
+    closeButton: true,
+    progressBar: true,
+
+  }),),]
+
 };

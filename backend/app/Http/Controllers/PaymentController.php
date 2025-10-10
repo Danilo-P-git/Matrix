@@ -5,30 +5,51 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
 
 class PaymentController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $payments = Payment::with(['user', 'activity', 'event'])
-                             ->orderBy('created_at', 'desc')
-                             ->get();
+        $query = Payment::with(['user', 'activity', 'event']);
 
-            return response()->json([
-                'success' => true,
-                'data' => $payments,
-                'message' => 'Pagamenti recuperati con successo'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Errore nel recupero dei pagamenti',
-                'error' => $e->getMessage()
-            ], 500);
+        if ($request->filled('status') && Schema::hasColumn('payments', 'status')) {
+            $query->where('status', $request->status);
         }
+        if ($request->filled('user_id') && Schema::hasColumn('payments', 'user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        if ($request->filled('activity_id') && Schema::hasColumn('payments', 'activity_id')) {
+            $query->where('activity_id', $request->activity_id);
+        }
+        if ($request->filled('event_id') && Schema::hasColumn('payments', 'event_id')) {
+            $query->where('event_id', $request->event_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                if (Schema::hasColumn('payments', 'notes')) {
+                    $q->orWhere('notes', 'like', "%{$search}%");
+                }
+                $q->orWhereHas('user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('activity', function ($a) use ($search) {
+                    $a->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('event', function ($e) use ($search) {
+                    $e->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json($payments);
     }
 
     public function store(StorePaymentRequest $request): JsonResponse

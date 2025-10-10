@@ -5,30 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Requests\StoreEquipmentRequest;
 use App\Http\Requests\UpdateEquipmentRequest;
 
 class EquipmentController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $equipment = Equipment::with(['year', 'subscription.user', 'event'])
-                              ->orderBy('created_at', 'desc')
-                              ->get();
+        $query = Equipment::with(['year', 'subscription.user', 'event']);
 
-            return response()->json([
-                'success' => true,
-                'data' => $equipment,
-                'message' => 'Equipaggiamenti recuperati con successo'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Errore nel recupero degli equipaggiamenti',
-                'error' => $e->getMessage()
-            ], 500);
+        if ($request->filled('status') && Schema::hasColumn('equipment', 'status')) {
+            $query->where('status', $request->status);
         }
+        if ($request->filled('year_id') && Schema::hasColumn('equipment', 'year_id')) {
+            $query->where('year_id', $request->year_id);
+        }
+        if ($request->filled('event_id') && Schema::hasColumn('equipment', 'event_id')) {
+            $query->where('event_id', $request->event_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                if (Schema::hasColumn('equipment', 'name')) {
+                    $q->orWhere('name', 'like', "%{$search}%");
+                }
+                $q->orWhereHas('subscription.user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('event', function ($e) use ($search) {
+                    $e->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $equipment = $query->orderBy('created_at', 'desc')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json($equipment);
     }
 
     public function store(StoreEquipmentRequest $request): JsonResponse

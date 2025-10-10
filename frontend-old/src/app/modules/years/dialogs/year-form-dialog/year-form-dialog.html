@@ -1,0 +1,90 @@
+<div class="p-6">
+  <h2 mat-dialog-title class="text-xl font-semibold text-gray-900 mb-4">
+    <mat-icon class="mr-2 text-primary">{{ data.mode === 'edit' ? 'edit' : 'add' }}</mat-icon>
+    {{ dialogTitle }}
+  </h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="yearForm" class="space-y-4">
+      <!-- Nome -->
+      <mat-form-field  class="w-full">
+        <mat-label>Nome *</mat-label>
+        <input matInput
+               formControlName="name"
+               placeholder="Es: Anno Accademico 2024-2025">
+        <mat-error *ngIf="yearForm.get('name')?.hasError('required')">
+          Il nome è obbligatorio
+        </mat-error>
+        <mat-error *ngIf="yearForm.get('name')?.hasError('maxlength')">
+          Il nome non può superare i 255 caratteri
+        </mat-error>
+      </mat-form-field>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Data Inizio -->
+        <mat-form-field >
+          <mat-label>Data Inizio *</mat-label>
+          <input matInput
+                 type="date"
+                 formControlName="start_date">
+          <mat-error *ngIf="yearForm.get('start_date')?.hasError('required')">
+            La data di inizio è obbligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Data Fine -->
+        <mat-form-field >
+          <mat-label>Data Fine *</mat-label>
+          <input matInput
+                 type="date"
+                 formControlName="end_date">
+          <mat-error *ngIf="yearForm.get('end_date')?.hasError('required')">
+            La data di fine è obbligatoria
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+
+
+      <!-- Descrizione -->
+      <mat-form-field  class="w-full">
+        <mat-label>Descrizione</mat-label>
+        <textarea matInput
+                  formControlName="description"
+                  rows="4"
+                  placeholder="Inserisci una descrizione opzionale per questo anno..."></textarea>
+        <mat-hint>
+          {{ (1000 - (yearForm.get('description')?.value?.length || 0)) }} caratteri rimanenti
+        </mat-hint>
+        <mat-error *ngIf="yearForm.get('description')?.hasError('maxlength')">
+          La descrizione non può superare i 1000 caratteri
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="flex space-x-3 pt-4">
+    <button mat-button
+            type="button"
+            (click)="onCancel()"
+            [disabled]="loading"
+            class="text-gray-600 hover:text-gray-800">
+      <mat-icon class="mr-1">close</mat-icon>
+      Annulla
+    </button>
+    <button mat-raised-button
+            color="primary"
+            (click)="onSubmit()"
+            [disabled]="yearForm.invalid || loading"
+            class="min-w-[120px]">
+      <mat-progress-spinner
+        *ngIf="loading"
+        diameter="20"
+        mode="indeterminate"
+        class="mr-2">
+      </mat-progress-spinner>
+      <mat-icon *ngIf="!loading" class="mr-1">save</mat-icon>
+      {{ submitButtonText }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,73 @@
+<div class="min-h-screen  p-6">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Page Header -->
+    <div class=" rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold ">Gestione Anni</h1>
+          <p class=" mt-1">Gestisci gli anni accademici o sportivi del sistema</p>
+        </div>
+        <button mat-raised-button
+                color="primary"
+                (click)="createYear()"
+                class="flex items-center space-x-2">
+          <mat-icon>add</mat-icon>
+          <span>Nuovo Anno</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Filters and Search -->
+    <div class=" rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <mat-form-field class="w-full">
+          <mat-label>Cerca per nome</mat-label>
+          <input matInput
+                 [(ngModel)]="filters.search"
+                 (input)="onFilterChange()"
+                 placeholder="Inserisci nome anno">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+
+        <mat-form-field class="w-full">
+          <mat-label>Anno Corrente</mat-label>
+          <mat-select  [(ngModel)]="filters.is_current" (selectionChange)="onFilterChange()">
+            <mat-option [value]="null">Tutti</mat-option>
+            <mat-option [value]="true">Solo anno corrente</mat-option>
+            <mat-option [value]="false">Escludi anno corrente</mat-option>
+          </mat-select>
+          <mat-icon matPrefix>star</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button mat-stroked-button (click)="resetFilters()" class="flex items-center space-x-2">
+          <mat-icon>clear</mat-icon>
+          <span>Reset Filtri</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class=" rounded-lg shadow-sm border border-gray-200">
+      <app-data-table
+        [data]="years"
+        [columns]="tableColumns"
+        [pageIndex]="pageIndex"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        [actions]="tableActions"
+        [searchable]="false"
+        [service]="yearService"
+        [filters]="filters"
+        (pageChange)="onPageChange($event)"
+        (sort)="onSort($event)"
+        #dataTable>
+      </app-data-table>
+    </div>
+
+  </div>
+</div>
