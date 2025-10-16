@@ -6,7 +6,8 @@ import {
   CreateYearRequest,
   UpdateYearRequest,
   YearListResponse,
-  YearStatistics
+  YearStatistics,
+  YearListResponsePaginated
 } from '../models/year.model';
 import { environment } from '../../../environments/environment';
 @Injectable({
@@ -27,7 +28,7 @@ export class YearService {
     is_active?: boolean;
     sort_by?: string;
     sort_direction?: 'asc' | 'desc';
-  }): Observable<YearListResponse> {
+  }): Observable<YearListResponsePaginated> {
     let httpParams = new HttpParams();
 
     if (params) {
@@ -39,7 +40,7 @@ export class YearService {
       });
     }
 
-    return this.http.get<YearListResponse>(this.apiUrl, { params: httpParams });
+    return this.http.get<YearListResponsePaginated>(this.apiUrl, { params: httpParams });
   }
 
   /**
@@ -80,8 +81,8 @@ export class YearService {
   /**
    * Get the current active year
    */
-  getCurrentYear(): Observable<Year> {
-    return this.http.get<Year>(`${this.apiUrl}/current`);
+  getCurrentYear(): Observable<YearListResponse> {
+    return this.http.get<YearListResponse>(`${this.apiUrl}-current`);
   }
 
   /**

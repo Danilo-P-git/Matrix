@@ -1,1 +1,55 @@
-<app-dashboard-header [title]="'Home'"></app-dashboard-header>
+<app-dashboard-header
+  [title]="'Home'"
+  [subtitle]="'Welcome to the Home Page'"
+  [text]="'This is the main dashboard area.'">
+</app-dashboard-header>
+<div class="row">
+  <div class="col-xxl-4 col-xl-6 col-12">
+      <div class="row">
+        @if (isLoading) {
+          <div class="col-12 text-center p-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2 text-muted">Caricamento in corso...</p>
+          </div>
+        } @else if (errorMessage) {
+          <div class="col-12 text-center p-4">
+            <div class="alert alert-warning" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+            <button class="btn btn-primary btn-sm" (click)="getYearData()">
+              <i class="bi bi-arrow-clockwise me-1"></i>
+              Riprova
+            </button>
+          </div>
+        } @else if (structuredData && structuredData.length > 0) {
+          <div class="mb-3 mt-3">
+            <button class="btn btn-primary" (click)="navigateToYears()">
+              <i class="bi bi-calendar-range me-2"></i>
+              Vai alla gestione degli anni
+              <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+          </div>
+          @for (card of structuredData; track $index) {
+            <div class="col-xxl-6 col-md-6">
+              <app-feature-card [isClickable]="true" [url]="card?.url" [data]="card"></app-feature-card>
+            </div>
+          }
+        } @else {
+          <div class="col-12 text-center p-4">
+            <p class="text-muted">Nessun dato disponibile</p>
+          </div>
+        }
+      </div>
+  </div>
+  <div class="col-xxl-8 col-xl-6">
+      <button class="btn btn-primary" (click)="navigateToYears()">
+              <i class="bi bi-calendar-range me-2"></i>
+              Vai alla gestione dell'equipaggiamento
+              <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+  </div>
+</div>
+

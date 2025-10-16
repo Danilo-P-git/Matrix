@@ -171,8 +171,8 @@ export class LoginPage implements OnInit {
     });
 
     this.loginForm = this.formBuilder.group({
-      username: ['spruko@admin.com', [Validators.required, Validators.email]],
-      password: ['sprukoadmin', Validators.required],
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
     });
 
     this.firestoreModule = this.firebaseService.getFirestore();
@@ -184,8 +184,8 @@ export class LoginPage implements OnInit {
     console.log(container);
 }
   // firebase
-  email = 'spruko@admin.com';
-  password = 'sprukoadmin';
+  email = '';
+  password = '';
   errorMessage = ''; // validation _error handle
   _error: { name: string; message: string } = { name: '', message: '' }; // for firbase _error handle
 
@@ -210,7 +210,7 @@ export class LoginPage implements OnInit {
         .login({ email: email, password: password })
         .subscribe({
           next: () => {
-            this.router.navigate(['/dashboards/sales']);
+            this.router.navigate(['/dashboards']);
             console.clear();
             this.toastr.success('login successful','Successo', {
               timeOut: 3000,
@@ -267,9 +267,8 @@ export class LoginPage implements OnInit {
     console.log(this.loginForm.value);
 
     // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => {
       this.login();
-    }, 0);
+
   }
 
   ngOnDestroy(): void {

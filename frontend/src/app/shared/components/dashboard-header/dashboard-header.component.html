@@ -1,8 +1,15 @@
 <div class="d-flex align-items-center justify-content-between mb-3 page-header-breadcrumb flex-wrap gap-2">
   <div>
     <h1 class="page-title fw-medium fs-20 mb-0">{{ title }}</h1>
+    <ng-container *ngIf="subtitle">
+      <h6 class="mb-0 text-muted">{{ subtitle }}</h6>
+    </ng-container>
   </div>
   <div class="d-flex align-items-center gap-2 flex-wrap">
-    <!-- TODO ROBA DA POTER METTERE -->
+
+    <ng-container *ngIf="text">
+      <p class="mb-0 text-muted">{{ text }}</p>
+    </ng-container>
+    <ng-content></ng-content>
   </div>
 </div>

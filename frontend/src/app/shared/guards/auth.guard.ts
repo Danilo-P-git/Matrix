@@ -11,11 +11,11 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Se una chiamata precedente ha prodotto 401 segnalo esplicitamente
   if (authService.wasUnauthorized()) {
-    router.navigate(['/login'], { queryParams: { returnUrl: state.url, error: 'unauthorized' } });
+
+    router.navigate(['auth/login'], { queryParams: { returnUrl: state.url, error: 'unauthorized' } });
     return false;
   }
-
   // Nessun token e nessun 401 registrato: redirect standard
-  router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+  router.navigate(['auth/login'], { queryParams: { returnUrl: state.url } });
   return false;
 };

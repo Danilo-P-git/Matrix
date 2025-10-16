@@ -3,7 +3,7 @@ export interface Year {
   name: string;
   start_date: string;
   end_date: string;
-  is_active: boolean;
+  note?: string;
   description?: string;
   created_at: string;
   updated_at: string;
@@ -26,7 +26,7 @@ export interface UpdateYearRequest {
   description?: string;
 }
 
-export interface YearListResponse {
+export interface YearListResponsePaginated {
   data: Year[];
   current_page: number;
   last_page: number;
@@ -39,4 +39,9 @@ export interface YearStatistics {
   active: number;
   inactive: number;
   current: number;
+}
+export interface YearListResponse {
+  data: Year[];
+  success: boolean;
+  message: string;
 }

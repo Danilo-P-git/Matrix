@@ -61,6 +61,32 @@ class YearController extends Controller
     }
 
     /**
+     * Get close years and current years No pagination only listing
+     */
+    public function getCurrent(): JsonResponse
+    {
+        try {
+            $currentYear = date('Y');
+            $closeYears = Year::where('start_date', '<=', $currentYear)
+                ->where('end_date', '>=', $currentYear)
+                ->get();
+        return response()->json([
+            'success' => true,
+            'data' => $closeYears,
+            'message' => 'Anni recuperati con successo'
+        ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving years',
+                'error' => $e->getMessage()
+            ], 500);
+
+        }
+
+    }
+
+    /**
      * Store a newly created year in storage.
      */
     public function store(StoreYearRequest $request): JsonResponse

@@ -10,6 +10,8 @@ import { Component, Input, input, OnInit } from '@angular/core';
 export class DashboardHeaderComponent implements OnInit {
 
   @Input() title = ''; // Card title, defaults to empty string
+  @Input() subtitle? = ''; // Card subtitle, defaults to empty string
+  @Input() text? = ''; // Card text, defaults to empty string
   constructor() { }
 
   ngOnInit() {

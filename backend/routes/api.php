@@ -24,8 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Year CRUD API routes
     Route::apiResource('years', YearController::class);
-    
+
     // Additional Year routes for soft delete management
+    Route::get('/years-current', [YearController::class, 'getCurrent']);
     Route::get('/years-with-trashed', [YearController::class, 'indexWithTrashed']);
     Route::get('/years-trashed', [YearController::class, 'onlyTrashed']);
     Route::patch('/years/{id}/restore', [YearController::class, 'restore']);
@@ -34,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Activity CRUD API routes
     Route::apiResource('activities', ActivityController::class);
-    
+
     // Additional Activity routes for soft delete management
     Route::get('/activities-with-trashed', [ActivityController::class, 'indexWithTrashed']);
     Route::get('/activities-trashed', [ActivityController::class, 'onlyTrashed']);

@@ -1,0 +1,40 @@
+
+
+   <div class="card custom-card dashboard-main-card overflow-hidden primary" [ngClass]="customClass">
+  <div class="card-body">
+    <div class="card-content">
+      <!-- Header con titolo e pulsante -->
+      <div class="card-header-section">
+        <span class="card-title" [title]="data()?.title">{{ data()?.title | truncate: titleTruncateLimit }}</span>
+        @if (isClickable && url) {
+          <button
+            class="btn btn-sm btn-outline-primary navigate-btn"
+            (click)="navigateToUrl()"
+            [title]="'Vai a ' + data()?.title">
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        }
+      </div>
+
+      <!-- Testo principale -->
+      <div class="card-text-section">
+        <h4 class="card-text" [title]="data()?.text">{{ data()?.text | truncate: truncateLimit }}</h4>
+      </div>
+
+      <!-- Note -->
+      <div class="card-note-section">
+        <p class="card-note" [title]="data()?.note">{{ data()?.note | truncate: noteTruncateLimit }}</p>
+      </div>
+
+      <!-- Footer con date -->
+      <div class="card-footer-section">
+        <span class="card-date">
+          <i class="bi bi-calendar3 me-1"></i>
+          {{ data()?.start_date | date:'dd/MM/yyyy' }} - {{ data()?.end_date | date:'dd/MM/yyyy' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+

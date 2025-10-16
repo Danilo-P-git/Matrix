@@ -23,6 +23,8 @@ import { SvgReplaceDirective } from './directives/svgReplace.directive';
 import { AuthenticationLayout } from './layouts/authentication-layout/authentication-layout';
 import { FullscreenDirective } from './directives/fullscreen.directive';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
+import { FeatureCardComponent } from './components/feature-card/feature-card.component';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
 
@@ -37,7 +39,9 @@ import { DashboardHeaderComponent } from './components/dashboard-header/dashboar
       SvgReplaceDirective,
       HoverEffectSidebarDirective,
       FullscreenDirective,
-      DashboardHeaderComponent
+      DashboardHeaderComponent,
+      FeatureCardComponent,
+      TruncatePipe,
     ],
 
     imports: [
@@ -66,7 +70,9 @@ import { DashboardHeaderComponent } from './components/dashboard-header/dashboar
              FullscreenDirective,
         AuthenticationLayout,FullLayout,
         HoverEffectSidebarDirective,
-        DashboardHeaderComponent
+        DashboardHeaderComponent,
+        FeatureCardComponent,
+        TruncatePipe
 
     ],
 

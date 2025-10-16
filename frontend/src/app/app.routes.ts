@@ -14,4 +14,9 @@ export const routes: Routes = [
   },
   { path: '', component: FullLayout, children: Full_Content_Routes},
   { path: '', component: AuthenticationLayout, children: Authentication_ROUTES },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./components/pages/error/error404/error404').then((m) => m.Error404)
+  }
 ];
