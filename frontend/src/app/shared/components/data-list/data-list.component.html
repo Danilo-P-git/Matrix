@@ -1,0 +1,224 @@
+@if (config.showCard) {
+  <div class="card custom-card" [ngClass]="{'overflow-hidden': config.layout === 'products' || config.layout === 'channels'}">
+    <!-- Card Header -->
+    @if (config.cardTitle) {
+      <div class="card-header justify-content-between">
+        <div class="card-title">{{ config.cardTitle }}</div>
+        @if (config.showViewAll) {
+          <a [href]="config.viewAllLink || 'javascript:void(0);'" class="text-muted fs-12 text-decoration-underline">
+            {{ config.viewAllText || 'View All' }}<i class="ti ti-arrow-narrow-right"></i>
+          </a>
+        }
+      </div>
+    }
+
+    <!-- Card Body -->
+    <div class="card-body" [ngClass]="config.cardBodyPadding || getDefaultPadding()">
+      <ng-container [ngTemplateOutlet]="dataListContent"></ng-container>
+    </div>
+  </div>
+} @else {
+  <ng-container [ngTemplateOutlet]="dataListContent"></ng-container>
+}
+
+<ng-template #dataListContent>
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Caricamento...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (items.length === 0) {
+    <div class="text-center p-4">
+      <p class="text-muted">{{ emptyMessage }}</p>
+    </div>
+  }
+
+  <!-- Products Layout -->
+  @else if (config.layout === 'products') {
+  <ul class="list-group list-group-flush card-body">
+    @for (item of items; track item.id || $index) {
+      <li class="list-group-item" [ngClass]="item.customClasses">
+        <div class="d-flex align-items-center gap-3">
+          <!-- Product Image -->
+          <div class="lh-1">
+            <span class="avatar avatar-lg bg-light border border-dashed p-1">
+              <img [src]="item.imageUrl" [alt]="item.title">
+            </span>
+          </div>
+
+          <!-- Product Info -->
+          <div class="flex-fill">
+            <span class="fw-semibold mb-1 d-block">{{ item.title }}</span>
+            <div class="d-flex align-items-center gap-2 fw-medium">
+              @if (item.subtitle) {
+                <div class="fs-12 text-muted">{{ item.subtitle }}</div>
+              }
+              @if (item.badge && item.subtitle) {
+                <div class="vr"></div>
+              }
+              @if (item.badge) {
+                <span class="fs-12" [ngClass]="{
+                  'text-success': item.badge.type === 'success',
+                  'text-danger': item.badge.type === 'danger',
+                  'text-warning': item.badge.type === 'warning',
+                  'text-info': item.badge.type === 'info'
+                }">
+                  @if (item.badge.icon) {
+                    <i [class]="item.badge.icon + ' me-1 fs-7 align-middle'"></i>
+                  }
+                  {{ item.badge.text }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Sales Info -->
+          @if (item.rightContent) {
+            <div class="text-end">
+              <span class="d-block fw-semibold" [ngClass]="item.rightContent.colorClass">
+                {{ item.rightContent.primary }}
+              </span>
+              @if (item.rightContent.secondary) {
+                <span class="fs-12 d-block text-muted">{{ item.rightContent.secondary }}</span>
+              }
+            </div>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+<!-- Activity Layout -->
+@else if (config.layout === 'activity') {
+  <ul class="list-unstyled recent-activity-list  pb-3">
+    @for (item of items; track item.id || $index) {
+      <li [ngClass]="item.customClasses">
+        <div class="recent-activity-time text-end">
+          <span class="fw-semibold d-block">{{ item.date || item.timestamp?.date }}</span>
+          <span class="d-block text-muted fs-12">{{ item.time || item.timestamp?.time }}</span>
+        </div>
+        <div>
+          <span class="d-block fs-13 mt-1">
+            <span [ngClass]="item.primaryClass">{{ item.title }}</span>
+            <span class="fw-medium" [ngClass]="item.secondaryClass">{{ item.secondaryText || item.subtitle }}</span>
+            <span class="">{{ item.additionalInfo || item.description }}</span>
+          </span>
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+<!-- Customers Layout -->
+@else if (config.layout === 'customers') {
+  <ul class="list-unstyled top-customers-list card-body">
+    @for (item of items; track item.id || $index) {
+      <li [ngClass]="item.customClasses">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <!-- Customer Avatar -->
+          <div class="lh-1">
+            @if (item.avatar?.imageUrl) {
+              <span class="avatar avatar-md">
+                <img [src]="item.avatar?.imageUrl" [alt]="item.title">
+              </span>
+            } @else if (item.avatar?.text) {
+              <span class="avatar avatar-md" [ngClass]="'bg-' + (item.avatar?.color || 'primary') + '-transparent'">
+                {{ item.avatar?.text }}
+              </span>
+            }
+          </div>
+
+          <!-- Customer Info -->
+          <div class="flex-fill">
+            <span class="d-block fw-semibold">{{ item.title }}</span>
+            @if (item.subtitle) {
+              <span class="fs-12 text-muted">{{ item.subtitle }}</span>
+            }
+          </div>
+
+          <!-- Spent Info -->
+          @if (item.rightContent) {
+            <div class="text-end">
+              <div class="fw-semibold" [ngClass]="item.rightContent.colorClass">
+                {{ item.rightContent.primary }}
+              </div>
+              @if (item.rightContent.secondary) {
+                <span class="fs-12 text-muted">{{ item.rightContent.secondary }}</span>
+              }
+            </div>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+<!-- Channels Layout -->
+@else if (config.layout === 'channels') {
+  <ul class="list-unstyled top-user-channels-list card-body">
+    @for (item of items; track item.id || $index) {
+      <li [ngClass]="item.customClasses">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <!-- Channel Logo -->
+          <div class="lh-1">
+            <span class="avatar avatar-md bg-light">
+              @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.title">
+              } @else if (item.avatar?.text) {
+                {{ item.avatar?.text }}
+              }
+            </span>
+          </div>
+
+          <!-- Channel Info -->
+          <div class="flex-fill">
+            <span class="d-block fw-semibold">{{ item.title }}</span>
+            @if (item.subtitle) {
+              <span class="text-muted fs-12">{{ item.subtitle }}</span>
+            }
+          </div>
+
+          <!-- Stats and Progress -->
+          <div class="text-end">
+            @if (item.trend && item.rightContent) {
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="fs-12 fw-medium" [ngClass]="{
+                  'text-success': item.trend.direction === 'up',
+                  'text-danger': item.trend.direction === 'down'
+                }">
+                  <i class="ti" [ngClass]="{
+                    'ti-arrow-narrow-up': item.trend.direction === 'up',
+                    'ti-arrow-narrow-down': item.trend.direction === 'down'
+                  }"></i>
+                  {{ item.trend.value }}
+                </span>
+                <div class="fw-semibold">{{ item.rightContent.primary }}</div>
+              </div>
+            }
+
+            @if (item.progress) {
+              <div class="progress progress-xs progress-animate"
+                   [ngClass]="item.progress.color + '-transparent'"
+                   role="progressbar"
+                   [attr.aria-valuenow]="item.progress.value"
+                   aria-valuemin="0"
+                   aria-valuemax="100">
+                <div class="progress-bar"
+                     [ngClass]="item.progress.color"
+                     [style.width.%]="item.progress.value">
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </li>
+    }
+  </ul>
+  }
+</ng-template>

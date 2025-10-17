@@ -6,6 +6,9 @@ import { FeatureCard } from '../../../shared/models/utility';
 import { catchError, of, Subject, takeUntil } from 'rxjs';
 import { MaterialModuleModule } from "../../../materialModule/material-module/material-module.module";
 import { Router } from '@angular/router';
+import { DataListConfig, DataListItem } from '../../../shared/components/data-list/data-list.component';
+import { productsData, activityData, customersData, channelsData } from '../../../shared/components/data-list/usage-examples';
+import { EquipmentService } from '../../../shared/services/equipment.service';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +18,15 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  constructor(private yearService: YearService, private cdr: ChangeDetectorRef, private router: Router) { }
+  constructor(private yearService: YearService, private equipmentService: EquipmentService, private cdr: ChangeDetectorRef, private router: Router) { }
 
   navigateToYears() {
     this.router.navigate(['/dashboards/years']);
   }
+  equipmentList: DataListItem[] = [];
+  dataListConfig: DataListConfig = { layout: 'products' };
+  emptyMessage: string = 'Nessun equipaggiamento disponibile';
+
   yearData: Year[] = [];
   structuredData: FeatureCard[] = [];
   isLoading: boolean = false;
@@ -28,6 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getYearData();
+    this.getEquipmentList();
   }
   ngOnDestroy() {
     this.destroy$.next();
@@ -71,6 +79,35 @@ export class HomeComponent implements OnInit, OnDestroy {
       url: '/dashboards/activities/' + year.id,
     }));
     console.log('Structured data:', this.structuredData);
+  }
+
+  getEquipmentList() {
+    // Implementa la logica per ottenere l'elenco dell'equipaggiamento
+    this.equipmentService.getEquipment().subscribe((response) => {
+      console.log('Elenco equipaggiamento ricevuto:', response);
+      this.dataListConfig = { layout: 'products', showCard: true, cardTitle: 'Elenco Equipaggiamento', showViewAll: true, viewAllText: 'Vedi tutti', viewAllLink: '/dashboards/equipment' } as DataListConfig;
+      // Mappa i dati ricevuti nel formato DataListItem
+      this.equipmentList = response.data.map(equipment => ({
+        id: equipment.id,
+        title: equipment.name,
+        subtitle: "Condizione: " + equipment.condition,
+        description: equipment.description,
+        badge: {
+          text: equipment.status,
+          type: equipment.status === 'available' ? 'success' : (equipment.status === 'assigned' ? 'warning' : 'danger'),
+          // Aggiungi altri campi se necessario
+        },
+        rightContent: {
+          primary: 'Assegnata: ' + (equipment.subscription?.user?.name || 'N/A'),
+          secondary: 'Codice: ' + (equipment.code || 'N/A')
+
+        }
+        // Aggiungi altri campi se necessario
+      }));
+      this.cdr.detectChanges(); // Forza il rilevamento delle modifiche
+    }, (error) => {
+      console.error('Errore nel caricamento dell\'elenco equipaggiamento:', error);
+    });
   }
 
 }

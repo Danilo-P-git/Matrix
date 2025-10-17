@@ -10,9 +10,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HoverEffectSidebarDirective } from './directives/hover-effect-sidebar.directive';
 
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-// import { MatAutocompleteModule } from '@angular/material/autocomplete';
-// import { MatFormFieldModule } from '@angular/material/form-field';
-// import { MatInputModule } from '@angular/material/input';
 import { Breadcrumb } from './components/breadcrumb/breadcrumb';
 import { Footer } from './components/footer/footer';
 import { Sidebar } from './components/sidebar/sidebar';
@@ -25,6 +22,7 @@ import { FullscreenDirective } from './directives/fullscreen.directive';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { FeatureCardComponent } from './components/feature-card/feature-card.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { DataListComponent } from './components/data-list/data-list.component';
 
 @NgModule({
 
@@ -41,6 +39,7 @@ import { TruncatePipe } from './pipes/truncate.pipe';
       FullscreenDirective,
       DashboardHeaderComponent,
       FeatureCardComponent,
+      DataListComponent,
       TruncatePipe,
     ],
 
@@ -67,11 +66,12 @@ import { TruncatePipe } from './pipes/truncate.pipe';
         TapToTop,
         //ShowcodeCard,
         SvgReplaceDirective,
-             FullscreenDirective,
+        FullscreenDirective,
         AuthenticationLayout,FullLayout,
         HoverEffectSidebarDirective,
         DashboardHeaderComponent,
         FeatureCardComponent,
+        DataListComponent,
         TruncatePipe
 
     ],

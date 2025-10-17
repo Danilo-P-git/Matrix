@@ -45,11 +45,15 @@
       </div>
   </div>
   <div class="col-xxl-8 col-xl-6">
-      <button class="btn btn-primary" (click)="navigateToYears()">
-              <i class="bi bi-calendar-range me-2"></i>
-              Vai alla gestione dell'equipaggiamento
-              <i class="bi bi-arrow-right ms-2"></i>
-      </button>
+        <div class="row">
+        <!-- Products Example -->
+        <div class="col-lg-6 mb-4">
+          <app-data-list [items]="equipmentList" [config]="dataListConfig"></app-data-list>
+        </div>
+
+
+      </div>
   </div>
+
 </div>
 
